@@ -111,7 +111,35 @@ for disciplina in setDisciplinasIngresso:
         continue
     dictDiscIngresso[disciplina] = retorno[1]
 
+## .............................................
 
+# Inserindo dados na tabela SERVIDORES
+print('\nInserindo os dados na tabela SERVIDORES...')
+tuplaCampos = tuple(['matricula'       ,'id_categoria_servidores','url_foto_75x100'         ,'id_setor_suap'             
+                     'funcao'          ,'curriculo_lattes'       ,'id_cargo_servidores'     , 
+                     'jornada_trabalho', 'campus'                , 'id_setor_siape', 
+                     'telefones_institucionais' ,'nome'          , 'id_disciplina_ingresso',                 ])
+for k,v in dad_lidos.items():
+    if dad_lidos[k]['categoria_servidores']                 == '': dad_lidos[k]['categoria_servidores']         = '-----'
+    if dad_lidos[k]['setores_siape']                        == '': dad_lidos[k]['setores_siape']                = '-----'
+    if dad_lidos[k]['campi']                                == '': dad_lidos[k]['campi']                        = '-----'
+    if dad_lidos[k]['setores_suap']                         == '': dad_lidos[k]['setores_suap']                 = '-----'
+    if dad_lidos[k]['cargo_servidores']                     == '': dad_lidos[k]['cargo_servidores']             = '-----'
+    if dad_lidos[k]['disciplina_ingresso']                  == '': dad_lidos[k]['situacao_sistemica']           = '-----'
+
+## Falta alterar alguns campos e adicionar outros
+    dad_lidos[k]['categoria_servidores']            = dictCatServido[dad_lidos[k]['categoria_servidores']]
+    dad_lidos[k]['setores_siape']                   = dictSetSiape[dad_lidos[k]['setores_siape']]
+    dad_lidos[k]['campi']                           = dictCampi[dad_lidos[k]['campi']]
+    dad_lidos[k]['setores_suap']                    = dictSetSuap[dad_lidos[k]['setores_suapa']]
+    dad_lidos[k]['cargo_servidores']                = dictCargServ[dad_lidos[k]['cargo_servidores']]
+    dad_lidos[k]['disciplina_ingresso']             = dictDiscIngresso[dad_lidos[k]['disciplina_ingresso']]
+
+    tuplaValores = tuple(v.values())
+
+    retorno = insereAlunos(tuplaCampos, tuplaValores, connDB)
+
+    if not retorno[0]: print(retorno[1])
 # ------------------------------------------------------------
 # Fechando a conexão com o Database Server
 connDB.close()
