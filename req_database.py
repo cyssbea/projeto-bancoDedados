@@ -44,6 +44,7 @@ def estruturaDB(conexao):
 
 
 # ...............................................................
+# ........... CONSULTA CAMPI .............
 def listaCampi(nomeTabela: str, conexao):
     boolSucesso        = False
     lstNomeCampi      = list()
@@ -51,7 +52,7 @@ def listaCampi(nomeTabela: str, conexao):
     strSQLNomeCampus   = 'SELECT campi.* AS sigla, categoria_servidores.categoria, servidores.matricula'
     strSQLNomeCampus  += 'COUNT(servidores.id_categoria_servidores) AS qtd_categoria_serv'
     strSQLNomeCampus  += 'FROM servidores.servidores'
-    strSQLNomeCampus  += f'INNER JOIN servidores.campus ON servidores.campus = campi.campus  '
+    strSQLNomeCampus  += 'INNER JOIN servidores.campus ON servidores.campus = campi.campus  '
     strSQLNomeCampus  += 'GROUP BY servidores.campus, campi.campus'
     try:
         cursorFields = conexao.cursor()
@@ -67,4 +68,26 @@ def listaCampi(nomeTabela: str, conexao):
     finally:
         return boolSucesso, lstNomeCampi, lstTipoCampi
 # ................................................................
-        
+# ...... CONSULTA DOCENTES ..............
+def listaDocente(nomeTabela: str, conexao):
+    boolSucesso        = False
+    lstNomeDocente      = list()
+    lstTipoCampos      = list()
+    strSQLNomeDocente   = 'SELECT servidores.matricula,servidores.nome,categoria_servidores.categoria,disciplina_ingresso.disciplina '
+    strSQLNomeDocente  += 'FROM servidores.servidores, categoria_servidores.categoria_servidores, disciplina_ingresso.disciplina_ingresso '
+    strSQLNomeDocente  += 'WHERE categoria_servidores.categoria = 'docente'
+    strSQLNomeDocente  += 'AND servidores.id_disciplina_ingresso = disciplina_ingresso.id'
+    strSQLNomeDocente  += ' GROUP BY servidores.matricula,categoria_servidores.categoria;'
+    try:
+        cursorFields = conexao.cursor()
+        cursorFields.execute(strSQLNomeDocente)
+    except:
+        lstNomeCampos = f'{sys.exc_info()}'
+    else:
+        boolSucesso = True
+        lstCampos   = cursorFields.fetchall()
+        for campos in lstCampos:
+            lstNomeDocente.append(campos[0])
+            lstTipoCampos.append(campos[1])
+    finally:
+        return boolSucesso, lstNomeCampos, lstTipoCampos
