@@ -131,7 +131,7 @@ for k,v in dad_lidos.items():
     dad_lidos[k]['categoria_servidores']            = dictCatServido[dad_lidos[k]['categoria_servidores']]
     dad_lidos[k]['setores_siape']                   = dictSetSiape[dad_lidos[k]['setores_siape']]
     dad_lidos[k]['campi']                           = dictCampi[dad_lidos[k]['campi']]
-    dad_lidos[k]['setores_suap']                    = dictSetSuap[dad_lidos[k]['setores_suapa']]
+    dad_lidos[k]['setores_suap']                    = dictSetSuap[dad_lidos[k]['setores_suap']]
     dad_lidos[k]['cargo_servidores']                = dictCargServ[dad_lidos[k]['cargo_servidores']]
     dad_lidos[k]['disciplina_ingresso']             = dictDiscIngresso[dad_lidos[k]['disciplina_ingresso']]
 
