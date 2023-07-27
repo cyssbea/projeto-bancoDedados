@@ -1,6 +1,7 @@
 # pip install psycopg2 --user
 import psycopg2, sys
 
+#Arquivo com Requisições ao Banco de Dados das questões 
 
 # ...............................................................
 def conectaDB(server: str, database: str, dbuser: str, userpwd: str):
@@ -15,7 +16,7 @@ def conectaDB(server: str, database: str, dbuser: str, userpwd: str):
     finally:
         return conectado, conexao
 
-## Atualizar estrutura de conexão
+#Estrutura de Conexão
 # ...............................................................
 def estruturaDB(conexao):
     boolSucesso        = False
@@ -69,6 +70,31 @@ def listaCampi(nomeTabela: str, conexao):
         return boolSucesso, lstNomeCampi, lstTipoCampi
 # ................................................................
 # ...... CONSULTA DOCENTES ..............
+def listaDocente(nomeTabela: str, conexao):
+    boolSucesso        = False
+    lstNomeDocente      = list()
+    lstTipoCampos      = list()
+    strSQLNomeDocente   = 'SELECT servidores.matricula,servidores.nome,categoria_servidores.categoria,disciplina_ingresso.disciplina '
+    strSQLNomeDocente  += 'FROM servidores.servidores, categoria_servidores.categoria_servidores, disciplina_ingresso.disciplina_ingresso '
+    strSQLNomeDocente  += 'WHERE categoria_servidores.categoria = 'docente'
+    strSQLNomeDocente  += 'AND servidores.id_disciplina_ingresso = disciplina_ingresso.id'
+    strSQLNomeDocente  += ' GROUP BY servidores.matricula,categoria_servidores.categoria;'
+    try:
+        cursorFields = conexao.cursor()
+        cursorFields.execute(strSQLNomeDocente)
+    except:
+        lstNomeCampos = f'{sys.exc_info()}'
+    else:
+        boolSucesso = True
+        lstCampos   = cursorFields.fetchall()
+        for campos in lstCampos:
+            lstNomeDocente.append(campos[0])
+            lstTipoCampos.append(campos[1])
+    finally:
+        return boolSucesso, lstNomeCampos, lstTipoCampos
+
+# ...... CONSULTA DISCIPLINA POR CAMPUS ..............
+## FALTA REALIZAR ALTERAÇÕES NA CONSULTA
 def listaDocente(nomeTabela: str, conexao):
     boolSucesso        = False
     lstNomeDocente      = list()

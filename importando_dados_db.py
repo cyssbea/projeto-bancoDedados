@@ -127,7 +127,6 @@ for k,v in dad_lidos.items():
     if dad_lidos[k]['cargo_servidores']                     == '': dad_lidos[k]['cargo_servidores']             = '-----'
     if dad_lidos[k]['disciplina_ingresso']                  == '': dad_lidos[k]['situacao_sistemica']           = '-----'
 
-## Falta alterar alguns campos e adicionar outros
     dad_lidos[k]['categoria_servidores']            = dictCatServido[dad_lidos[k]['categoria_servidores']]
     dad_lidos[k]['setores_siape']                   = dictSetSiape[dad_lidos[k]['setores_siape']]
     dad_lidos[k]['campi']                           = dictCampi[dad_lidos[k]['campi']]
