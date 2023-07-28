@@ -1,7 +1,7 @@
 # pip install psycopg2 --user
 import psycopg2, sys
 
-#Arquivo com Requisições ao Banco de Dados das questões 
+#Arquivo com Requisições ao Banco de Dados das questões  --- QUESTOES D,E,F
 
 # ...............................................................
 def conectaDB(server: str, database: str, dbuser: str, userpwd: str):
@@ -49,12 +49,13 @@ def estruturaDB(conexao):
 def listaCampi(nomeTabela: str, conexao):
     boolSucesso        = False
     lstNomeCampi      = list()
-    lstNomeCampi      = list()
-    strSQLNomeCampus   = 'SELECT campi.* AS sigla, categoria_servidores.categoria, servidores.matricula'
+    lstTipoCampi      = list()
+    strSQLNomeCampus   = 'SELECT campi.campus AS sigla,categoria_servidores.categoria,servidores.matricula'
     strSQLNomeCampus  += 'COUNT(servidores.id_categoria_servidores) AS qtd_categoria_serv'
-    strSQLNomeCampus  += 'FROM servidores.servidores'
-    strSQLNomeCampus  += 'INNER JOIN servidores.campus ON servidores.campus = campi.campus  '
-    strSQLNomeCampus  += 'GROUP BY servidores.campus, campi.campus'
+    strSQLNomeCampus  += 'FROM servidores'
+    strSQLNomeCampus  += 'INNER JOIN categoria_servidores ON servidores.id_categoria_servidores = categoria_servidores.id_categoria_servidores'
+    strSQLNomeCampus  += 'INNER JOIN servidores ON servidores.campus = campi.campus' 
+    strSQLNomeCampus  += 'GROUP BY servidores.matricula,campi.campus,categoria_servidores.categoria;'
     try:
         cursorFields = conexao.cursor()
         cursorFields.execute(strSQLNomeCampus)
@@ -74,16 +75,17 @@ def listaDocente(nomeTabela: str, conexao):
     boolSucesso        = False
     lstNomeDocente      = list()
     lstTipoCampos      = list()
-    strSQLNomeDocente   = 'SELECT servidores.matricula,servidores.nome,categoria_servidores.categoria,disciplina_ingresso.disciplina '
-    strSQLNomeDocente  += 'FROM servidores.servidores, categoria_servidores.categoria_servidores, disciplina_ingresso.disciplina_ingresso '
-    strSQLNomeDocente  += 'WHERE categoria_servidores.categoria = 'docente'
-    strSQLNomeDocente  += 'AND servidores.id_disciplina_ingresso = disciplina_ingresso.id'
-    strSQLNomeDocente  += ' GROUP BY servidores.matricula,categoria_servidores.categoria;'
+    strSQLNomeDocente   = 'SELECT  servidores.matricula,servidores.nome,categoria_servidores.categoria,disciplina_ingresso.disciplina,campi.campus'
+    strSQLNomeDocente  += 'COUNT(disciplina_ingresso.id) AS qtd_disciplina'
+    strSQLNomeDocente  += 'FROM servidores, categoria_servidores, disciplina_ingresso, campi'
+    strSQLNomeDocente  += 'WHERE categoria_servidores.categoria = 'docente''
+    strSQLNomeDocente  += 'INNER JOIN servidores ON servidores.id_disciplina_ingresso = disciplina_ingresso.id'
+    strSQLNomeDocente  += 'GROUP BY servidores.matricula,categoria_servidores.categoria,disciplina_ingresso.disciplina;'
     try:
         cursorFields = conexao.cursor()
         cursorFields.execute(strSQLNomeDocente)
     except:
-        lstNomeCampos = f'{sys.exc_info()}'
+        lstNomeDocente = f'{sys.exc_info()}'
     else:
         boolSucesso = True
         lstCampos   = cursorFields.fetchall()
@@ -91,29 +93,29 @@ def listaDocente(nomeTabela: str, conexao):
             lstNomeDocente.append(campos[0])
             lstTipoCampos.append(campos[1])
     finally:
-        return boolSucesso, lstNomeCampos, lstTipoCampos
+        return boolSucesso, lstNomeDocente, lstTipoCampos
 
 # ...... CONSULTA DISCIPLINA POR CAMPUS ..............
-## FALTA REALIZAR ALTERAÇÕES NA CONSULTA
-def listaDocente(nomeTabela: str, conexao):
+def listaDisciplina(nomeTabela: str, conexao):
     boolSucesso        = False
-    lstNomeDocente      = list()
-    lstTipoCampos      = list()
-    strSQLNomeDocente   = 'SELECT servidores.matricula,servidores.nome,categoria_servidores.categoria,disciplina_ingresso.disciplina '
-    strSQLNomeDocente  += 'FROM servidores.servidores, categoria_servidores.categoria_servidores, disciplina_ingresso.disciplina_ingresso '
-    strSQLNomeDocente  += 'WHERE categoria_servidores.categoria = 'docente'
-    strSQLNomeDocente  += 'AND servidores.id_disciplina_ingresso = disciplina_ingresso.id'
-    strSQLNomeDocente  += ' GROUP BY servidores.matricula,categoria_servidores.categoria;'
+    lstNomeDisciplina      = list()
+    lstTipoDisciplina      = list()
+    strSQLNomeDisciplina   = 'SELECT servidores.matriculaservidores.nome,categoria_servidores.categoria,disciplina_ingresso.disciplina,campi.campus'
+    strSQLNomeDisciplina  += 'COUNT(disciplina_ingresso.id) AS qtd_disciplina'
+    strSQLNomeDisciplina  += 'FROM disciplina_ingresso'
+    strSQLNomeDisciplina  += 'INNER JOIN servidores ON servidores.id_disciplina_ingresso = disciplina_ingresso.id'
+    strSQLNomeDisciplina  += 'INNER JOIN servidores ON servidores.campus = campi.campus'
+    strSQLNomeDisciplina  += 'GROUP BY disciplina_ingresso.id,campi.campus;'
     try:
         cursorFields = conexao.cursor()
-        cursorFields.execute(strSQLNomeDocente)
+        cursorFields.execute(strSQLNomeDisciplina)
     except:
-        lstNomeCampos = f'{sys.exc_info()}'
+        lstNomeDisciplina = f'{sys.exc_info()}'
     else:
         boolSucesso = True
-        lstCampos   = cursorFields.fetchall()
-        for campos in lstCampos:
-            lstNomeDocente.append(campos[0])
-            lstTipoCampos.append(campos[1])
+        lstDisciplina   = cursorFields.fetchall()
+        for campos in lstDisciplina:
+            lstNomeDisciplina.append(campos[0])
+            lstTipoDisciplina.append(campos[1])
     finally:
-        return boolSucesso, lstNomeCampos, lstTipoCampos
+        return boolSucesso, lstNomeDisciplina, lstTipoDisciplina
